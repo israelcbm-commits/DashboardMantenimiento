@@ -201,7 +201,6 @@ input[type=date],input[type=week],input[type=month]{cursor:pointer;}
 const GOOGLE_SCRIPT_URL_TURNO = "https://script.google.com/macros/s/AKfycbzEZCodZrZuJIOgN7xUohH56pqQPpIcVjfudeoVtnzFil13So3MJb3Ez8mP3V3tnOd2/exec";
 const GOOGLE_SCRIPT_URL_PREVENTIVO = "https://script.google.com/macros/s/AKfycbz0EDDSDDU7nkvj1UUNNB_lR1AvEZeO9GYjrPi1bmiIt_n5OXTBc62tvqRCPXB93uWkPw/exec";
 
-const AREAS = ["Maderas","Secador","Contiroll","Finalizado","Laminadora 1","Laminadora 2","Servicios industriales"];
 
 let itemsCorrectivo = []; // eventos de Informe de Turno, aplanados
 let itemsFallas = [];     // fallas ÚNICAS (sin repetidos) para el análisis de fallas
@@ -324,8 +323,8 @@ async function cargarTodo(forzar){
   // Aplanar eventos de Informe de Turno (Correctivo)
   itemsCorrectivo = [];
   recordsTurno.forEach(rec=>{
-    AREAS.forEach(area=>{
-      (rec.eventos && rec.eventos[area] || []).forEach(ev=>{
+    Object.keys(rec.eventos || {}).forEach(area=>{
+      (rec.eventos[area] || []).forEach(ev=>{
         const mins = durationMinutes(ev.horaIni, ev.horaFin);
         const tecnicos = (ev.tecnicos||'').split(',').map(n=>n.trim()).filter(Boolean);
         itemsCorrectivo.push({
@@ -342,8 +341,8 @@ async function cargarTodo(forzar){
   // Aplanar actividades de Mantenimiento Preventivo
   itemsPreventivo = [];
   recordsPreventivo.forEach(rec=>{
-    AREAS.forEach(area=>{
-      (rec.actividades && rec.actividades[area] || []).forEach(act=>{
+    Object.keys(rec.actividades || {}).forEach(area=>{
+      (rec.actividades[area] || []).forEach(act=>{
         const mins = durationMinutes(act.horaIni, act.horaFin);
         const reportante = (rec.reporta||'').trim();
         itemsPreventivo.push({
@@ -821,3 +820,4 @@ document.addEventListener('click', (e)=>{
 
 </body>
 </html>
+
